@@ -10,8 +10,6 @@
   let width = $state(4);
   let height = $state(3);
 
-  let area = $derived(width * height)
-
   function growWidth() {
     width += 1;
   }
@@ -23,7 +21,7 @@
 <div class="example">
   <h3>3. Multiple state values</h3>
   <p>Width: {width} · Height: {height}</p>
-  <p>Area: {area}</p>
+  <p>Area: {width * height}</p>
   <button onclick={growWidth}>Grow width</button>
   <button onclick={growHeight}>Grow height</button>
 

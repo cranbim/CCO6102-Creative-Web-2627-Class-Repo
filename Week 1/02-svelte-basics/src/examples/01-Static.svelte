@@ -10,8 +10,8 @@
   That's the gap the next example fixes.
 -->
 <script>
-  let dave=$state('dave')
-  let count = $state(0); // plain JS variable — Svelte is not tracking this
+  let control=$state(0); //to disable the Svelte 4 auto-reactive behaviour
+  let count = 0; // plain JS variable — Svelte is not tracking this
 
   function increment() {
     count += 1;

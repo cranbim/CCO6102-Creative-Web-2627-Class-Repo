@@ -14,7 +14,7 @@
   <h3>4. Binding an input to state</h3>
   <label>
     Your name:
-    <input bind:value={name} placeholder="I'm waiting for you..." />
+    <input bind:value={name} placeholder="Type here..." />
   </label>
   {#if name}
     <p>Hello, {name}!</p>

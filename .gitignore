@@ -1,0 +1,35 @@
+# Node dependencies
+node_modules/
+
+# SvelteKit build output
+.svelte-kit/
+build/
+output/
+.vercel/
+
+# Environment variables
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+
+# Optional: lock files (if you don't want to commit them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+#Just for Dave
+Test/
