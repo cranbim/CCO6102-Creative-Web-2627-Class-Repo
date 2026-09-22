@@ -1,0 +1,37 @@
+<script>
+	// App.svelte
+	// The data lives right here — a plain array of plain objects. No
+	// import, no fetch, nothing reactive. {#each} just needs something
+	// to loop over.
+	import FriendCard from './FriendCard.svelte';
+
+	const friends = [
+		{ name: 'Amara', online: true },
+		{ name: 'Ben', online: false },
+		{ name: 'Chloe', online: true },
+		{ name: 'Dev', online: false }
+	];
+</script>
+
+<main>
+	<h1>Friends</h1>
+
+	<ul>
+		{#each friends as friend}
+			<FriendCard {friend} />
+		{/each}
+	</ul>
+</main>
+
+<style>
+	main {
+		max-width: 400px;
+		margin: 2rem auto;
+		font-family: system-ui, sans-serif;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0;
+	}
+</style>

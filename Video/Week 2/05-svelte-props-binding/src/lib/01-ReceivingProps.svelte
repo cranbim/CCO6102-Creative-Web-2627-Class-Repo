@@ -5,9 +5,9 @@
   // then destructure the names we want — same destructuring syntax as
   // any other JS object.
   
-  // let { name, favouriteColour } = $props();
-    let name="...?"
-    let favouriteColour="...?"
+  let { name, favouriteColour } = $props();//runes
+  // let name="Sam"
+  // let favouriteColour="red"
 </script>
 
 <div class="demo">
