@@ -6,9 +6,6 @@ down as a prop, and `async`/`await`. Three independent exercises, one
 theme (a reading list), roughly easiest to hardest — same "run side by
 side" shape as every demo/lab so far.
 
-Built for a real spread of confidence levels in one cohort: Exercise 1 is
-a near-guaranteed win for anyone still nervous about the basics; Exercise
-3 is a genuine stretch for students who are already comfortable.
 
 ## Setup
 
