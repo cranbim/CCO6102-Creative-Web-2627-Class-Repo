@@ -1,0 +1,228 @@
+/*
+	classless.css
+	Drop this file into src/, import it once from your top-level
+	component (e.g. `import './classless.css';` in App.svelte), and build
+	your markup with ordinary elements — form, input, button, ul/li,
+	headings. Nothing here depends on a class name existing.
+
+	Where it can't guess your intent from the element alone, it uses
+	@media (prefers-color-scheme) and :has()/:empty rather than asking
+	you to tag anything. Two optional classes are offered at the very
+	bottom, for the one or two moments a plain element genuinely isn't
+	enough — everything else here is automatic.
+*/
+
+:root {
+	color-scheme: light dark;
+	--bg: #fafafa;
+	--surface: #ffffff;
+	--text: #1a1a1a;
+	--muted: #6b6b6b;
+	--border: #ddd;
+	--accent: #3a6fd8;
+	--accent-text: #ffffff;
+	--radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #16181d;
+		--surface: #21242b;
+		--text: #eee;
+		--muted: #9a9a9a;
+		--border: #3a3d44;
+		--accent: #6d94f0;
+		--accent-text: #16181d;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background: var(--bg);
+	color: var(--text);
+	font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+	line-height: 1.5;
+}
+
+/*
+	Vite/Svelte mounts your app into <div id="app">. Styling that
+	directly, rather than asking you to add a wrapper element, is what
+	lets this file give you page layout for free.
+*/
+#app {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 2rem 1.5rem 4rem;
+}
+
+/* Vertical rhythm between your top-level sections/forms/lists, however
+   you've named or nested them — no wrapper class required. */
+#app > * + * {
+	margin-top: 2rem;
+}
+
+h1,
+h2,
+h3 {
+	line-height: 1.25;
+	margin: 0 0 0.5rem 0;
+}
+
+h1 {
+	font-size: 1.75rem;
+}
+
+h2 {
+	font-size: 1.25rem;
+}
+
+h3 {
+	font-size: 1.05rem;
+}
+
+p {
+	margin: 0.25rem 0;
+}
+
+/* ---------- Forms ---------- */
+
+form {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 1.25rem;
+}
+
+form > * + * {
+	margin-top: 0.9rem;
+}
+
+label {
+	display: block;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+label > input,
+label > select {
+	margin-top: 0.3rem;
+}
+
+input,
+select,
+textarea {
+	width: 100%;
+	font: inherit;
+	color: inherit;
+	background: var(--bg);
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	padding: 0.5rem 0.6rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 2px solid var(--accent);
+	outline-offset: 1px;
+}
+
+button {
+	font: inherit;
+	font-weight: 600;
+	background: var(--accent);
+	color: var(--accent-text);
+	border: none;
+	border-radius: 6px;
+	padding: 0.55rem 1.1rem;
+	cursor: pointer;
+}
+
+button:hover {
+	filter: brightness(1.08);
+}
+
+button:active {
+	filter: brightness(0.95);
+}
+
+button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* A form's own submit button often reads better flush right */
+form > button[type='submit'] {
+	display: block;
+	margin-left: auto;
+}
+
+/* ---------- Lists ---------- */
+
+ul,
+ol {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+li {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 0.75rem 1rem;
+}
+
+/* ---------- Semantic hooks worth knowing about ---------- */
+
+/*
+	<output> is the correct element for "the result of a calculation" —
+	exactly what a shared-state summary/count is. Wrapping one in
+	<output>...</output> is valid HTML AND gets you this styling for
+	free, no class needed:
+	    <output>{studentCount} students, {petCount} pets</output>
+*/
+output {
+	display: inline-block;
+	background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+	border: 1px solid var(--accent);
+	border-radius: 999px;
+	padding: 0.3rem 0.9rem;
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+
+/*
+	<small> is the correct element for side comments / fine print — a
+	natural fit for "no pet yet" placeholder text inside a card.
+*/
+small {
+	color: var(--muted);
+}
+
+/* ---------- Optional, minimal classes ---------- */
+
+/*
+	Only reach for these if a plain element genuinely doesn't say what
+	you mean. Nothing above requires either of them.
+*/
+
+/* A quiet, muted line of text — an alternative to <small> when the text
+   isn't literally "fine print" but should still read as secondary. */
+.muted {
+	color: var(--muted);
+}
+
+/* A brief highlight, e.g. on a just-added list item. Add and remove it
+   yourself (a class toggle, or a CSS animation via animation-fill-mode)
+   — this only defines the look. */
+.highlight {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
+}
