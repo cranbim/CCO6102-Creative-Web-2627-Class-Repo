@@ -29,7 +29,7 @@
   import { onMount, onDestroy } from "svelte";
   import * as Tone from "tone";
 
-  const STEP_COUNT = 8;
+  const STEP_COUNT = 16;
 
   let steps = $state(Array(STEP_COUNT).fill(false));
   let currentStep = $state(0);

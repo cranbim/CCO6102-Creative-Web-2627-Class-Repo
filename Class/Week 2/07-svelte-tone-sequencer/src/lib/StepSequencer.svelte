@@ -32,12 +32,13 @@
   const STEP_COUNT = 8;
 
   let steps = $state(Array(STEP_COUNT).fill(false));
+  let steps2 = $state(Array(STEP_COUNT).fill(false));
   let currentStep = $state(0);
   let playing = $state(false);
   let bpm = $state(120);
 
   /** @type {Tone.Synth} */
-  let synth;
+  let synth, synth2;
   /** @type {ReturnType<typeof setInterval> | null} */
   let intervalId = null;
 
@@ -45,11 +46,15 @@
     synth = new Tone.Synth({
       envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.2 },
     }).toDestination();
+    synth2 = new Tone.Synth({
+      envelope: { attack: 0.005, decay: 0.1, sustain: 0.1, release: 0.2 },
+    }).toDestination();
   });
 
   onDestroy(() => {
     stop();
     synth?.dispose();
+    synth2?.dispose();
   });
 
   function msPerStep() {
@@ -60,6 +65,9 @@
   function tick() {
     if (steps[currentStep]) {
       synth.triggerAttackRelease("C4", "16n");
+    }
+    if (steps2[currentStep]) {
+      synth2.triggerAttackRelease("E4", "16n");
     }
     currentStep = (currentStep + 1) % STEP_COUNT;
   }
@@ -83,8 +91,14 @@
     }
   }
 
-  function toggleStep(i) {
-    steps[i] = !steps[i];
+  function toggleStep(track,i) {
+    if(track==0){
+      steps[i] = !steps[i];
+    }
+    if(track==1){
+      steps2[i] = !steps2[i];
+    }
+    
   }
 
   // If bpm changes while playing, restart the interval at the new speed.
@@ -106,7 +120,19 @@
         class="step"
         class:on
         class:playhead={playing && currentStep === i}
-        onclick={() => toggleStep(i)}
+        onclick={() => toggleStep(0,i)}
+        aria-pressed={on}
+      >
+        {i + 1}
+      </button>
+    {/each}
+
+    {#each steps2 as on, i}
+      <button
+        class="step"
+        class:on
+        class:playhead={playing && currentStep === i}
+        onclick={() => toggleStep(1,i)}
         aria-pressed={on}
       >
         {i + 1}
