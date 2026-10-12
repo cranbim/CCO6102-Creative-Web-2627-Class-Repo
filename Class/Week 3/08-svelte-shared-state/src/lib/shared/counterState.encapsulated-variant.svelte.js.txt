@@ -1,0 +1,47 @@
+// counterState.encapsulated-variant.svelte.js.txt
+//
+// REFERENCE ONLY — not imported anywhere in this project.
+// Renamed with a .txt suffix on purpose so it doesn't get bundled by Vite;
+// copy the contents into a real .svelte.js file if you want to try it live.
+//
+// This is the SAME shared-counter behaviour as counterState.svelte.js, but
+// written so the state itself is private and can only be touched through
+// exported functions — count and setCount are never exposed directly.
+//
+// Worth showing students briefly (not teaching in depth): this "protect the
+// data, only allow access through methods" shape is exactly what a data
+// MODEL looks like. Right now our API-backed weeks (from Week 4 onward) will
+// use a plain static array with simple functions like these. Later, when we
+// swap that array for MongoDB via Mongoose, the *shape* of this thinking
+// doesn't change — only what sits behind the functions does. Mongoose
+// schemas and methods are this same idea, just backed by a database instead
+// of an in-memory array.
+
+let count = $state(0);
+
+export function getCount() {
+	return count;
+}
+
+export function increment() {
+	count += 1;
+}
+
+export function reset() {
+	count = 0;
+}
+
+// A class-based version reads even closer to a "model":
+//
+// class CounterModel {
+// 	#count = $state(0);
+// 	get count() { return this.#count; }
+// 	increment() { this.#count += 1; }
+// 	reset() { this.#count = 0; }
+// }
+// export const counterModel = new CounterModel();
+//
+// Both variants above prevent a component from doing `count = 5` directly —
+// every change has to go through a named method. That's a deliberate
+// constraint, not a limitation, and it's the same constraint a Mongoose
+// model enforces later in the module.
