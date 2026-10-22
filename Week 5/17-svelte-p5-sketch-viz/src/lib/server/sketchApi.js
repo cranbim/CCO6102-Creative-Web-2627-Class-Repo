@@ -12,21 +12,11 @@
  * ------------------------------------------------------------------
  */
 
-import { SKETCH_API_URL } from '$env/static/private';
+import { SKETCH_API_URL } from '$app/env/private';
 
-/**
- * @typedef {object} Sketch
- * @property {number} id
- * @property {string} title
- * @property {string} artist
- * @property {string} colorTag
- * @property {boolean} favourite
- */
-
-/**
- * @returns {Promise<Array<Sketch>>}
- */
 export async function fetchSketches() {
+	// await means: pause this function until Express answers, then
+	// carry on with whatever it sent back.
 	const res = await fetch(`${SKETCH_API_URL}/api/sketches`);
 
 	if (!res.ok) {

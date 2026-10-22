@@ -16,25 +16,22 @@
  */
 
 import { error } from '@sveltejs/kit';
-import { fetchSketches } from '$lib/server/sketchApi.js';
+import { fetchSketches } from '#lib/server/sketchApi.js';
 
-/** @type {import('./$types').PageServerLoad} */
 export async function load() {
 	try {
+		// await means: pause this function until the Express server
+		// answers, then carry on with the result.
 		const sketches = await fetchSketches();
 		return { sketches };
 	} catch (err) {
 		// This is an EXPECTED error — we know exactly what went wrong
 		// (the Sketch API didn't respond) and we can give the user a
 		// clear, honest message instead of a generic crash page.
-		// `err` is `unknown` here (standard JS catch typing), so we
-		// narrow it before reading .message.
-		const message = err instanceof Error ? err.message : String(err);
-		console.error('Failed to reach the Sketch API:', message);
+		console.error('Failed to reach the Sketch API:', err.message);
 
-		error(502, {
-			message:
-				"Couldn't reach the Sketch Gallery API. Is 15-express-sketch-api running on port 3001?"
-		});
+		// 502 = Bad Gateway: we could not get an answer from the
+		// service behind us.
+		error(502, "Couldn't reach the Sketch Gallery API. Is 15-express-sketch-api running on port 3001?");
 	}
 }

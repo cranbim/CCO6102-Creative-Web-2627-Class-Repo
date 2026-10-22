@@ -1,24 +1,24 @@
 <script>
+	// Instance mode: everything p5 offers hangs off the `p` we are
+	// given, so p.createCanvas(...) instead of createCanvas(...). This
+	// keeps p5 from polluting the global window object, which matters
+	// when p5 lives alongside SvelteKit's own reactivity. Static
+	// import, same as Weeks 1 & 3 — p5 doesn't touch the browser's
+	// `window` until a sketch actually runs inside onMount, so there's
+	// no server-rendering problem to work around here.
 	import p5 from 'p5';
 	import { onMount, onDestroy } from 'svelte';
 
 	let { data } = $props();
 
-	/** @type {HTMLDivElement} */
 	let container;
-	// p5's own type declarations don't play nicely with plain JSDoc
-	// checking in instance mode, so we deliberately type these loosely
-	// as `any` rather than fight the library's types.
-	/** @type {any} */
-	let p5Instance;
+	let sketchInstance;
 
-	// p5 is wired in INSTANCE MODE via onMount/onDestroy — same pattern
-	// as Weeks 1 & 3's p5 demos, and Week 4's asteroid visualisation
-	// this project extends. Instance mode keeps p5 from polluting the
-	// global window object, which matters when p5 lives alongside
-	// SvelteKit's own reactivity.
+	// onMount runs once, in the browser, after the page appears —
+	// never call browser-only code like this at the top level of a
+	// component, because that code also runs during server rendering,
+	// where there's no window or canvas to draw into.
 	onMount(() => {
-		/** @param {any} p */
 		const sketch = (p) => {
 			p.setup = () => {
 				p.createCanvas(700, 400).parent(container);
@@ -38,7 +38,7 @@
 					// favourite === true gets a bigger circle and a
 					// visible ring — the "hidden logic" moment from
 					// Track 1 (favourite was toggled via a PATCH
-					// nobody outside Express's store module computes)
+					// nobody outside Express's data module computes)
 					// pays off visually here.
 					const size = s.favourite ? 90 : 60;
 
@@ -60,11 +60,15 @@
 			};
 		};
 
-		p5Instance = new p5(sketch, container);
+		sketchInstance = new p5(sketch, container);
 	});
 
+	// onDestroy: stop the sketch so it doesn't keep running after the
+	// page is gone. We check sketchInstance exists first, rather than
+	// reaching for the ?. operator, since the check is only two words
+	// longer and reads the same way a plain JS "if" always has.
 	onDestroy(() => {
-		p5Instance?.remove();
+		if (sketchInstance) sketchInstance.remove();
 	});
 </script>
 

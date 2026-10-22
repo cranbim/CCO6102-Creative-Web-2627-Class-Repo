@@ -1,0 +1,20 @@
+{
+  "name": "15-express-sketch-api",
+  "version": "1.0.0",
+  "description": "Week 5 — a standalone Express Data API for the Creative Web module's Sketch Gallery",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

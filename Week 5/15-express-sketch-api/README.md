@@ -5,6 +5,21 @@ from the SvelteKit project, not a route inside it. This is "the big mental
 leap" of the week: two independent Node processes, talking to each other
 over plain HTTP, same as any client/server pair.
 
+## Creating this project from scratch
+
+This is a plain Node/Express project, not a SvelteKit one, so there's no
+`sv create` step:
+
+```bash
+mkdir 15-express-sketch-api && cd 15-express-sketch-api
+npm init -y
+npm install express
+npm install --save-dev nodemon
+```
+
+Then add `"type": "module"` to `package.json` (so `import`/`export`
+syntax works), and a `dev` script that runs `nodemon index.js`.
+
 ## What this demonstrates
 
 - Building an Express API from scratch (`app.get`, `app.post`, `express.json()`)
@@ -15,6 +30,10 @@ over plain HTTP, same as any client/server pair.
 - Running Node as a standalone long-running server process — a third hat
   for Node, distinct from the dev-tool hat and the "runs our own SvelteKit
   server routes" hat from Week 4
+- `try`/`catch` in every route handler, and status codes chosen and
+  justified by comment (`400`, `201`, `404`, `500`) — the same habit
+  this week establishes on the Express side that `+server.js` already
+  established on the SvelteKit side in Week 4
 
 ## Before the session
 
@@ -80,23 +99,35 @@ barely changes at all. Worth saying this out loud in class: *"we're
 building this so that swapping the database underneath it later is almost
 invisible from here."*
 
+## What we left out (deliberately)
+
+- **No real persistence** — see below; a restart wipes everything POSTed
+  or PATCHed in class.
+- **No request validation library** — the 400 checks are three plain
+  `if` conditions, not a schema. That's enough for four fields; it
+  wouldn't scale past this demo, and that's fine for a demo.
+- **No auth** — anyone who can reach port 3001 can POST/PATCH/DELETE.
+  Not a concern for a local teaching demo; would matter the moment this
+  deploys anywhere real.
+
 ## Lab exercise (PATCH)
 
-`sketchData.update(id, changes)` **already exists and works** — it's just not
-wired to a route yet. Your task: add a route to `index.js` that:
-
-1. Listens for `PATCH /api/sketches/:id`
-2. Reads the `id` from `req.params`
-3. Reads the changes from `req.body`
-4. Calls `sketchData.update(id, changes)`
-5. Sends the result back as JSON — and handles the case where
-   `sketchData.update()` returns `null` (no sketch had that id)
+| Step | What to do |
+|---|---|
+| 1 | Add a route to `index.js` listening for `PATCH /api/sketches/:id`. |
+| 2 | Read `id` from `req.params` — remember to convert it with `Number()`, it arrives as a string. |
+| 3 | Guard against a missing body the same way the POST route above does (`if (!req.body) {...}`), then read the changes from `req.body`. |
+| 4 | Call `sketchData.update(id, changes)` and keep what it returns. |
+| 5 | If it returned `null` (no sketch had that id), respond `404`. Otherwise send the updated sketch back as JSON. |
 
 There's a TODO comment block in `index.js` showing exactly where this
 goes, and the POST route just above it is the pattern to copy.
 
-**Stretch challenge (DELETE):** same idea, using the already-working
-`sketchData.remove(id)`. There's a TODO for this too.
+**Stretch challenge (DELETE):** write the matching `DELETE
+/api/sketches/:id` route yourself, using the already-working
+`sketchData.remove(id)` — same shape again, but a successful delete has
+nothing to send back (look up which status code means exactly that: it
+worked, there's nothing more to say).
 
 **Stuck, or want to check your work?** `lab-solution-reference/` has a
 finished version — tutor-only, not meant to be handed to students
@@ -122,8 +153,34 @@ class is gone the next time `npm run dev` restarts. Worth naming this
 honestly in the session — it's exactly the gap Week 6's MongoDB work
 fixes.
 
-## Verified
+## Further reading
 
-Built and tested on Node 22.22.2 / Express 5.2.1 (re-verified 2/9/26 after the sketchesStore.js → sketchData.js rename). GET, POST (success and
-400-on-missing-field), and the PATCH/DELETE reference solution (success
-and 404-on-bad-id) all confirmed working via `curl` on 2/9/26.
+- [Express — Routing](https://expressjs.com/en/guide/routing.html) — the
+  `app.get`/`app.post`/`app.patch`/`app.delete` shapes used throughout.
+- [MDN — HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
+  — for the 400/201/404/500/204 choices made (and justified by comment)
+  in this project and its lab solution.
+
+## Verification notes
+
+Built and tested on Node 22.22.0 / Express 5.3.0, 22 Oct 2026, after this
+pass to match the plain-code style guide. Every route handler now has an
+explicit `try`/`catch` (not present before this pass).
+
+Tested directly against a real running `node index.js` server with
+`curl`:
+
+- `GET /api/sketches` → 200, four seeded sketches
+- `POST` with a valid body → 201, new sketch returned with assigned id
+- `POST` with a field missing → 400
+- `POST` with **no body and no `Content-Type` header at all** → **400**,
+  not a crash. This edge case wasn't handled by the original `req.body
+  ?? {}` version (removed as part of the style-guide pass) — without a
+  `Content-Type` header, `express.json()` leaves `req.body` as
+  `undefined` rather than `{}`, which crashed the destructure. Caught by
+  actually testing a bare `curl -X POST` with no flags, not just the
+  happy path. Fixed with an explicit `if (!req.body)` check instead of
+  reintroducing `??`.
+- `lab-solution-reference/index-with-patch-delete.js`: `PATCH` (success,
+  no-body-400, unknown-id-404) and `DELETE` (success-204,
+  unknown-id-404) all re-tested after the same fix was applied there.

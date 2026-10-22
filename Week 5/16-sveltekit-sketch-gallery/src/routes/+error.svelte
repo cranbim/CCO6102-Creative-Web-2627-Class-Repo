@@ -10,21 +10,19 @@
 -->
 <script>
 	import { page } from '$app/state';
+
+	// $derived recomputes this whenever `page` changes — same rune
+	// used since Week 3. page.error is only ever missing in the rare
+	// case SvelteKit itself couldn't figure out what went wrong (not
+	// our situation here — our own +page.server.js always sets a
+	// message), but we check for it explicitly rather than assuming,
+	// so this page never crashes trying to read .message off nothing.
+	let errorMessage = $derived(page.error ? page.error.message : 'Something went wrong.');
 </script>
 
-<!--
-	Modern JS syntax note: `page.error?.message ?? 'Something went
-	wrong.'` combines two operators —
-	  ?.  optional chaining: if page.error is null/undefined, stop
-	      there instead of throwing ("cannot read .message of null")
-	  ??  nullish coalescing: if the left side is null/undefined,
-	      use the right side instead
-	Together: "show the error message if there is one, otherwise
-	show a generic fallback".
--->
 <main class="error-page">
 	<h1>{page.status}</h1>
-	<p>{page.error?.message ?? 'Something went wrong.'}</p>
+	<p>{errorMessage}</p>
 	<p class="hint">
 		<a href="/">← Back to home</a>
 	</p>

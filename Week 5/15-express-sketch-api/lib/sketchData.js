@@ -6,16 +6,16 @@
  * WHY THIS SHAPE?
  * Nothing outside this file knows (or should care) that the data
  * currently lives in a plain JavaScript array in memory. The Express
- * routes in index.js only ever call getAll() / create() / update() /
- * remove() — they never touch `sketches` directly.
+ * routes in index.js only ever call getAll() / getById() / create() /
+ * update() / remove() — they never touch `sketches` directly.
  *
  * That's deliberate. In Week 6 this array is going to be replaced
  * with a real MongoDB collection via Mongoose. When that happens,
- * these four function SIGNATURES stay exactly the same — only the
- * code INSIDE them changes (array methods -> Mongoose calls). The
- * Express routes in index.js won't need to change at all.
+ * these function SIGNATURES stay exactly the same — only the code
+ * INSIDE them changes (array methods -> Mongoose calls). The Express
+ * routes in index.js won't need to change at all.
  *
- * This is the same idea as Week 4's $lib/server/neo.js helper — pull the
+ * This is the same idea as Week 4's #lib/server/neo.js helper — pull the
  * "how do we actually get/change the data" logic into one place, so the
  * rest of the app can stay blissfully unaware of the details.
  *
@@ -40,35 +40,30 @@ let sketches = [
 	{ id: 4, title: 'Glass Choir', artist: 'Priya', colorTag: '#f7d65d', favourite: true }
 ];
 
-// Simple auto-incrementing id, based on whatever the highest existing id is.
-// Good enough for an in-memory demo — MongoDB will generate its own real
-// ids (_id) for us in Week 6, so this whole nextId dance disappears then.
+// Simple auto-incrementing id, based on how many sketches have ever been
+// created. Good enough for an in-memory demo — MongoDB will generate its
+// own real ids (_id) for us in Week 6, so this whole nextId counter
+// disappears then.
 let nextId = sketches.length + 1;
 
 // --- CRUD operations --------------------------------------------------------
+// Four functions, four jobs: Create, Read, Update, Delete. Each one does
+// exactly one thing, so a route handler in index.js never has to guess
+// what a function might also be doing on the side.
 
-/**
- * READ (all) — return every sketch.
- * @returns {Array<object>}
- */
+// READ (all) — return every sketch.
 export function getAll() {
 	return sketches;
 }
 
-/**
- * READ (one) — return a single sketch by id, or undefined if not found.
- * @param {number} id
- * @returns {object|undefined}
- */
+// READ (one) — return a single sketch by id, or undefined if none matches.
 export function getById(id) {
-	return sketches.find((s) => s.id === id);
+	return sketches.find((sketch) => sketch.id === id);
 }
 
-/**
- * CREATE — add a new sketch and return it (with its assigned id).
- * @param {{title: string, artist: string, colorTag: string}} data
- * @returns {object} the newly created sketch, including its id
- */
+// CREATE — add a new sketch and return it, including its assigned id.
+// `data` is expected to look like { title, artist, colorTag } — the
+// route handler that calls this already checked those fields exist.
 export function create(data) {
 	const newSketch = {
 		id: nextId++,
@@ -81,26 +76,29 @@ export function create(data) {
 	return newSketch;
 }
 
-/**
- * UPDATE — apply a partial set of changes to an existing sketch.
- * @param {number} id
- * @param {object} changes - any subset of {title, artist, colorTag, favourite}
- * @returns {object|null} the updated sketch, or null if no sketch had that id
- */
+// UPDATE — apply a partial set of changes to an existing sketch.
+// `changes` can be any subset of { title, artist, colorTag, favourite } —
+// whatever fields it has get copied onto the matching sketch; anything
+// it leaves out stays as it was.
 export function update(id, changes) {
 	const sketch = sketches.find((s) => s.id === id);
 	if (!sketch) return null;
-	Object.assign(sketch, changes);
+
+	// `for...in` visits every property NAME on an object — here, every
+	// field the caller wants to change (e.g. just "favourite", or
+	// "title" and "colorTag" together). We copy each one across by
+	// hand so it's plain to see what's actually happening to `sketch`.
+	for (const key in changes) {
+		sketch[key] = changes[key];
+	}
 	return sketch;
 }
 
-/**
- * DELETE — remove a sketch by id.
- * @param {number} id
- * @returns {boolean} true if a sketch was removed, false if none matched
- */
+// DELETE — remove a sketch by id. Returns true if something was actually
+// removed, false if no sketch had that id (so the route handler can tell
+// the difference and respond with the right status code).
 export function remove(id) {
 	const startLength = sketches.length;
-	sketches = sketches.filter((s) => s.id !== id);
+	sketches = sketches.filter((sketch) => sketch.id !== id);
 	return sketches.length < startLength;
 }
