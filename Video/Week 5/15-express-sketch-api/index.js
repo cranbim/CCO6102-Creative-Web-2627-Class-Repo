@@ -47,6 +47,11 @@ app.get('/api/sketches', (req, res) => {
 	}
 });
 
+app.get('/api/sketches/:id', (req, res) => {
+	let id=Number(req.params.id)
+	res.json(sketchData.getById(id)) 
+});
+
 // --- POST /api/sketches — add a new sketch ----------------------------------
 // Taught live in the "POST — adding new data via a form" segment.
 app.post('/api/sketches', (req, res) => {
