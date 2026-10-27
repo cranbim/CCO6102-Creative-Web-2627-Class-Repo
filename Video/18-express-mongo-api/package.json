@@ -1,0 +1,20 @@
+{
+  "name": "18-express-mongo-api",
+  "version": "1.0.0",
+  "description": "Week 6 — Express + Mongoose data API. Swaps Week 5's in-memory sketchData.js for real MongoDB Atlas persistence, via Mongoose. Routes and their shapes are unchanged from Week 5's 15-express-sketch-api.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^9.9.5",
+    "dotenv": "^17.4.2"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
