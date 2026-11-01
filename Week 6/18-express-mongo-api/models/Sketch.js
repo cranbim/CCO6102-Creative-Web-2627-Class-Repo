@@ -12,7 +12,7 @@ const sketchSchema = new Schema(
 		artist: { type: String, required: true },
 		colorTag: { type: String, required: true },
 		favourite: { type: Boolean, default: false }
-		// LAB (row 16 of the outline tab): add one new field here yourself —
+		// LAB : add one new field here yourself —
 		// e.g. a numeric rating (Number, min/max) — then wire a small
 		// Mongoose-backed query route in index.js that uses it (e.g. a sort
 		// or a simple filter). See lab-solution-reference/ for one worked
@@ -26,12 +26,8 @@ const sketchSchema = new Schema(
 		// the idiomatic Mongoose way to get the same thing, and doubles as
 		// worked support for the lab's "sort by newest" stretch option.
 		timestamps: true,
-		// COMPATIBILITY FIX, found by testing rather than assumed: Mongoose
-		// documents only include `_id` in their default JSON output, not
-		// `id` — verified directly while building this (see the README's
-		// verification section). Week 5's array-backed API always returned
-		// a plain `id` field, and 16-sveltekit-sketch-gallery almost
-		// certainly reads `sketch.id` (e.g. for PATCH/DELETE URLs). Turning
+		// COMPATIBILITY FIX, Week 5's array-backed API always returned
+		// a plain `id` field, and 16-sveltekit-sketch-gallery reads `sketch.id` (e.g. for PATCH/DELETE URLs). Turning
 		// on the `id` virtual in JSON output keeps that contract intact
 		// without touching the SvelteKit side at all.
 		toJSON: { virtuals: true }
