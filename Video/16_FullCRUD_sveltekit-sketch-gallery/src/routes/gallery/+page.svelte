@@ -69,7 +69,7 @@
 	// ONLY the field that changes: favourite, flipped.
 	async function toggleFavourite(sketch) {
 		listError = '';
-
+		console.log('Sketch id:',sketch.id, sketch.title)
 		try {
 			const res = await fetch(`/api/sketches/${sketch.id}`, {
 				method: 'PATCH',

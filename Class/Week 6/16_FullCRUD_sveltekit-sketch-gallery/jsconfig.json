@@ -1,0 +1,11 @@
+{
+	"extends": "$app/tsconfig",
+	"compilerOptions": {
+		// This project is plain JS, not TypeScript, and the demo code
+		// deliberately has no JSDoc @param/@returns annotations — so
+		// type-checking of JS files is switched off here rather than
+		// fighting it. svelte-check still catches real Svelte mistakes.
+		"checkJs": false
+	},
+	"include": ["src", "vite.config.js"]
+}
