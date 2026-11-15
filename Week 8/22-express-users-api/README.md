@@ -62,15 +62,3 @@ A token is sent as the header `Authorization: Bearer <token>`. Express never sen
 - Mongoose FAQ, "unique" is an index, not a validator: https://mongoosejs.com/docs/faq.html#unique-doesnt-work
 - MDN, HTTP authentication (the Bearer type): https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Authentication#bearer
 
-## Verification notes (10/11/26)
-
-- **Run:** Node 22.23, express 5.3.0, mongoose 9.12.1, dotenv 18.0.10. `node --check` on every file. 21 API tests passed against a running server:
-  - every status code in the table above;
-  - password and token never returned;
-  - the author always comes from the token, even when a fake `author` is sent;
-  - an edited token gives 401;
-  - the old token dies when the same user logs in again;
-  - the token dies at logout;
-  - an empty `Bearer` value and the wrong auth type both give 401.
-- **Run:** `try-express.js` (401 with the placeholder token), and the full browser flow through `23-sveltekit-users-wall` (see its README).
-- **NOT run against MongoDB Atlas**, which this sandbox cannot reach. All tests ran against **FerretDB 1.24 (SQLite backend)**, which speaks MongoDB's protocol, including the unique index and the 11000 duplicate-key error. Dave's dry run against the real class Atlas cluster is still needed.
